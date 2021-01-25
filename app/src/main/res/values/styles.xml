@@ -1,0 +1,16 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:colorPrimaryDark">@color/colorOldPrimaryDark</item>
+        <item name="android:colorPrimary">@color/colorOldPrimary</item>
+        <item name="android:colorAccent">@color/colorOldAccent</item>
+        <item name="android:navigationBarColor">@color/colorOldPrimaryDark</item>
+    </style>
+
+    <style name="ToolBar" parent="Widget.MaterialComponents.Toolbar">
+        <item name="titleTextColor">#FFFFFF</item>
+        <item name="subtitleTextColor">#FFFFFF</item>
+        <item name="android:background">@color/colorOldPrimary</item>
+    </style>
+
+</resources>

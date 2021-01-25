@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
+    android:paddingStart="10dp"
+    android:paddingTop="20dp"
+    android:paddingEnd="10dp">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvTodaySteps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvAddSteps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/edtAddSteps"
+        android:text="@string/text_add_steps" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/edtAddSteps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTodaySteps"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@id/tvAddSteps"
+        android:gravity="center"
+        android:hint="@string/text_input_add_steps"
+        android:inputType="numberSigned"
+        android:maxLength="9"
+        android:maxLines="1" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvModifyMode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/rdgModifyMode"
+        android:layout_alignBottom="@id/rdgModifyMode"
+        android:gravity="center"
+        android:text="@string/text_modify_mode" />
+
+    <RadioGroup
+        android:id="@+id/rdgModifyMode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edtAddSteps"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_toEndOf="@id/tvModifyMode"
+        android:orientation="horizontal">
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/rdbAddSteps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/text_modify_mode_add" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/rdbSetSteps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="@string/text_modify_mode_set" />
+    </RadioGroup>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvAutoModify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/shFirstOpenAutoAdd"
+        android:text="@string/text_auto_modify_mode" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/shFirstOpenAutoAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rdgModifyMode"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@id/tvAutoModify"
+        android:text="@string/text_first_open_auto_modify" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/shTimingModify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rdgModifyMode"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@id/shFirstOpenAutoAdd"
+        android:text="@string/text_zero_auto_modify" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnModifySteps"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/shFirstOpenAutoAdd"
+        android:text="@string/text_modify_steps"
+        app:cornerRadius="15dp" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvUseTip"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/btnModifySteps"
+        android:layout_marginTop="10dp"
+        android:scrollbarStyle="outsideInset"
+        android:scrollbars="vertical"
+        android:text="@string/text_use_tip" />
+</RelativeLayout>
