@@ -1,6 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cn.xylin.mistep">
 
+    <uses-permission android:name="miui.permission.WRITE_STEPS" />
+    <uses-permission android:name="miui.permission.READ_STEPS" />
+
     <application
         android:name=".StepApplication"
         android:allowBackup="true"

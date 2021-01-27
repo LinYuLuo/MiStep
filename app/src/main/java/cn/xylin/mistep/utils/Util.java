@@ -1,15 +1,14 @@
 package cn.xylin.mistep.utils;
 
+import android.app.Activity;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import android.app.Activity;
-import android.widget.Toast;
-import android.os.Looper;
-
 import cn.xylin.mistep.StepApplication;
 
 /**
@@ -67,20 +66,20 @@ public class Util {
         return STRING_NULL;
     }
 
-    public static void toast(Object idOrString){
-        toast(idOrString,Toast.LENGTH_SHORT);
+    public static void toast(Object idOrString) {
+        toast(idOrString, Toast.LENGTH_SHORT);
     }
 
-    public static void toast(Object idOrString,int duration){
-        toast(StepApplication.get(),idOrString,duration);
+    public static void toast(Object idOrString, int duration) {
+        toast(StepApplication.get(), idOrString, duration);
     }
 
     public static void toast(Activity appActivity, Object idOrString) {
-        toast(appActivity,idOrString,Toast.LENGTH_SHORT);
+        toast(appActivity, idOrString, Toast.LENGTH_SHORT);
     }
 
     public static void toast(final Activity appActivity, final Object idOrString, final int duration) {
-        if(appActivity!=null) {
+        if (appActivity != null) {
             if (Looper.myLooper() == Looper.getMainLooper()) {
                 String str;
                 if (idOrString instanceof Integer) {
