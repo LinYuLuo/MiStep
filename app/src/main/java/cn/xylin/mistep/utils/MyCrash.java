@@ -1,9 +1,9 @@
 package cn.xylin.mistep.utils;
 
 import android.content.Context;
-import android.os.Build;
 import android.os.Looper;
 import android.widget.Toast;
+
 import cn.xylin.mistep.StepApplication;
 
 /**
@@ -50,25 +50,7 @@ public class MyCrash implements Thread.UncaughtExceptionHandler {
                 @Override
                 public void run() {
                     Looper.prepare();
-                    for (StackTraceElement traceElement : throwable.getStackTrace()) {
-                        WLOG.outLogs(
-                                "Class=" + traceElement.getClassName(),
-                                "Method=" + traceElement.getMethodName(),
-                                "Line=" + traceElement.getLineNumber(),
-                                "StackTrace=" + traceElement.toString(), ""
-                        );
-                    }
-                    WLOG.outLogs(
-                            "Throwable=" + throwable.toString(), "",
-                            "Device Brand=" + Build.BRAND,
-                            "Device Model=" + Build.MODEL,
-                            "Android Device=" + Build.DEVICE,
-                            "Android ID=" + Build.DISPLAY,
-                            "Android Incremental=" + Build.VERSION.INCREMENTAL,
-                            "Android Sdk=" + Build.VERSION.SDK_INT,
-                            "Android Version=" + Build.VERSION.RELEASE,
-                            "--------------------------------------"
-                    );
+                    WLOG.outThrowable(throwable);
                     Toast.makeText(myContext, "程序出现未知错误，请查看日志文件。", Toast.LENGTH_SHORT).show();
                     Looper.loop();
                 }

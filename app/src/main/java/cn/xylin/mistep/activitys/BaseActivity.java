@@ -24,9 +24,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        super.setContentView(R.layout.content_view);
         appActivity = this;
         StepApplication.add(appActivity);
-        super.setContentView(R.layout.content_view);
         trBar = findViewById(R.id.trBar);
         setSupportActionBar(trBar);
         initActivityControl();

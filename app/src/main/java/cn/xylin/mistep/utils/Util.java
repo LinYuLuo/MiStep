@@ -7,9 +7,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import cn.xylin.mistep.StepApplication;
 
 /**
  * @author XyLin
@@ -21,7 +18,7 @@ public class Util {
     public static final boolean BOOLEAN_NULL = false;
     public static final int INT_NULL = 0;
     public static final long DELAY_TIME = 2000L;
-    public static final ExecutorService TASK_SERVICE = Executors.newFixedThreadPool(5);
+    //public static final ExecutorService TASK_SERVICE = Executors.newFixedThreadPool(5);
 
     public static boolean isStrEmpty(CharSequence sequence) {
         return TextUtils.isEmpty(sequence);
@@ -64,14 +61,6 @@ public class Util {
             return ((TextView) control).getText().toString().trim();
         }
         return STRING_NULL;
-    }
-
-    public static void toast(Object idOrString) {
-        toast(idOrString, Toast.LENGTH_SHORT);
-    }
-
-    public static void toast(Object idOrString, int duration) {
-        toast(StepApplication.get(), idOrString, duration);
     }
 
     public static void toast(Activity appActivity, Object idOrString) {

@@ -1,7 +1,9 @@
 package cn.xylin.mistep.utils;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -42,9 +44,31 @@ public class WLOG {
         }
     }
 
-    public static void printLogs(String tag, String... logs) {
+    public static void outThrowable(Throwable throwable) {
+        for (StackTraceElement traceElement : throwable.getStackTrace()) {
+            WLOG.outLogs(
+                    "Class=" + traceElement.getClassName(),
+                    "Method=" + traceElement.getMethodName(),
+                    "Line=" + traceElement.getLineNumber(),
+                    "StackTrace=" + traceElement.toString(), ""
+            );
+        }
+        WLOG.outLogs(
+                "Throwable=" + throwable.toString(), "",
+                "Device Brand=" + Build.BRAND,
+                "Device Model=" + Build.MODEL,
+                "Android Device=" + Build.DEVICE,
+                "Android ID=" + Build.DISPLAY,
+                "Android Incremental=" + Build.VERSION.INCREMENTAL,
+                "Android Sdk=" + Build.VERSION.SDK_INT,
+                "Android Version=" + Build.VERSION.RELEASE,
+                "--------------------------------------"
+        );
+    }
+
+    public static void printLogs(String tag, Object... logs) {
         StringBuilder builder = new StringBuilder(tag).append("：");
-        for (String log : logs) {
+        for (Object log : logs) {
             builder.append(log);
         }
         Log.i("WLOG", builder.toString());

@@ -2,13 +2,10 @@ package cn.xylin.mistep;
 
 import android.app.Activity;
 import android.app.Application;
-
 import java.util.ArrayList;
-
 import cn.xylin.mistep.activitys.Main;
 import cn.xylin.mistep.utils.MyCrash;
 import cn.xylin.mistep.utils.Shared;
-import cn.xylin.mistep.utils.Util;
 import cn.xylin.mistep.utils.WLOG;
 
 
@@ -25,7 +22,7 @@ public class StepApplication extends Application {
         super.onCreate();
         WLOG.initLogFile(getApplicationContext());
         MyCrash.getInstance().initContext(getApplicationContext());
-        Shared.getShared().addShared(getApplicationContext(), Main.XML_SETTING);
+        Shared.getShared().addShared(getApplicationContext(), Main.USER_SETTING);
     }
 
     public static void add(Activity appActivity) {
@@ -50,7 +47,7 @@ public class StepApplication extends Application {
             }
         }
         ACTIVITYS.clear();
-        Util.TASK_SERVICE.shutdownNow();
+        //Util.TASK_SERVICE.shutdownNow();
         android.os.Process.killProcess(android.os.Process.myPid());
     }
 }

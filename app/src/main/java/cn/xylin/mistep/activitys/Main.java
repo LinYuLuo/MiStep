@@ -4,13 +4,15 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
+
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
+
 import java.util.Calendar;
 import java.util.TimeZone;
+
 import cn.xylin.mistep.R;
 import cn.xylin.mistep.StepApplication;
 import cn.xylin.mistep.utils.Shared;
@@ -24,7 +26,7 @@ import cn.xylin.mistep.works.AutoModifySteps;
  * Main.java
  **/
 public class Main extends BaseActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, View.OnLongClickListener {
-    public static final String XML_SETTING = "userSetting";
+    public static final String USER_SETTING = "userSetting";
     public static final String ROOT_MODE = "isRootMode";
     public static final String MODIFY_MODE_ADD = "modifyModeAdd";
     public static final String AUTO_MODIFY_MODE = "autoModifyMode";
@@ -52,17 +54,17 @@ public class Main extends BaseActivity implements View.OnClickListener, Compound
 
     @Override
     void initControlAttribute() {
-        isRootMode = shared.getValue(XML_SETTING, ROOT_MODE, false);
+        isRootMode = shared.getValue(USER_SETTING, ROOT_MODE, false);
         updateTodaySteps();
-        edtAddSteps.setText(shared.getValue(XML_SETTING, AUTO_ADD_STEPS, 0).toString());
-        rdgModifyMode.check(shared.getValue(XML_SETTING, MODIFY_MODE_ADD, true) ? R.id.rdbAddSteps : R.id.rdbSetSteps);
-        autoModifyMode = shared.getValue(XML_SETTING, AUTO_MODIFY_MODE, 0);
+        edtAddSteps.setText(shared.getValue(USER_SETTING, AUTO_ADD_STEPS, 0).toString());
+        rdgModifyMode.check(shared.getValue(USER_SETTING, MODIFY_MODE_ADD, true) ? R.id.rdbAddSteps : R.id.rdbSetSteps);
+        autoModifyMode = shared.getValue(USER_SETTING, AUTO_MODIFY_MODE, 0);
         shFirstOpenAutoAdd.setChecked(autoModifyMode == 1);
         shTimingModify.setChecked(autoModifyMode == 2);
         rdgModifyMode.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                shared.putValue(XML_SETTING, MODIFY_MODE_ADD, checkedId == R.id.rdbAddSteps).commitShared(XML_SETTING);
+                shared.putValue(USER_SETTING, MODIFY_MODE_ADD, checkedId == R.id.rdbAddSteps).commitShared(USER_SETTING);
             }
         });
         shFirstOpenAutoAdd.setOnCheckedChangeListener(this);
@@ -70,7 +72,7 @@ public class Main extends BaseActivity implements View.OnClickListener, Compound
         MaterialButton button = findViewById(R.id.btnModifySteps);
         button.setOnClickListener(this);
         button.setOnLongClickListener(this);
-        ((TextView) findViewById(R.id.tvUseTip)).setMovementMethod(ScrollingMovementMethod.getInstance());
+        ((MaterialTextView) findViewById(R.id.tvUseTip)).setMovementMethod(ScrollingMovementMethod.getInstance());
         if (autoModifyMode == 1) {
             checkNewDay();
         }
@@ -78,26 +80,28 @@ public class Main extends BaseActivity implements View.OnClickListener, Compound
 
     private void checkNewDay() {
         int day = Calendar.getInstance(TimeZone.getDefault()).get(Calendar.DAY_OF_MONTH);
-        if (shared.getValue(XML_SETTING, DAY_INT, -1) != day) {
-            shared.putValue(XML_SETTING, DAY_INT, day).commitShared(XML_SETTING);
-            onClick(null);
+        if (shared.getValue(USER_SETTING, DAY_INT, -1) != day) {
+            shared.putValue(USER_SETTING, DAY_INT, day).commitShared(USER_SETTING);
+            findViewById(R.id.btnModifySteps).callOnClick();
             StepApplication.finishAll();
         }
     }
 
     @Override
     public void onClick(View v) {
-        String inputStr = Util.getControlText(edtAddSteps);
-        if (Util.isStrEmpty(inputStr)) {
-            Util.toast(appActivity, R.string.toast_empty_steps);
-        } else {
-            try {
-                int steps = Integer.parseInt(inputStr);
-                shared.putValue(XML_SETTING, AUTO_ADD_STEPS, steps).commitShared(XML_SETTING);
-                Util.toast(appActivity, StepUtil.modifySteps(getApplicationContext(), rdgModifyMode.getCheckedRadioButtonId() == R.id.rdbSetSteps, isRootMode, steps) ? "修改步数成功。" : "修改步数失败，请尝试切换模式。");
-                updateTodaySteps();
-            } catch (NumberFormatException ignore) {
-                Util.toast(appActivity, R.string.toast_input_steps_error);
+        if (v.getId() == R.id.btnModifySteps) {
+            String inputStr = Util.getControlText(edtAddSteps);
+            if (Util.isStrEmpty(inputStr)) {
+                Util.toast(appActivity, R.string.toast_empty_steps);
+            } else {
+                try {
+                    int steps = Integer.parseInt(inputStr);
+                    shared.putValue(USER_SETTING, AUTO_ADD_STEPS, steps).commitShared(USER_SETTING);
+                    Util.toast(appActivity, StepUtil.modifySteps(getApplicationContext(), rdgModifyMode.getCheckedRadioButtonId() == R.id.rdbSetSteps, isRootMode, steps) ? "修改步数成功。" : "修改步数失败，请尝试切换模式。");
+                    updateTodaySteps();
+                } catch (NumberFormatException ignore) {
+                    Util.toast(appActivity, R.string.toast_input_steps_error);
+                }
             }
         }
     }
@@ -114,7 +118,7 @@ public class Main extends BaseActivity implements View.OnClickListener, Compound
         }
         if (autoModifyMode != tempMode) {
             AutoModifySteps.setNextModifySteps(getApplicationContext(), autoModifyMode != 2);
-            shared.putValue(XML_SETTING, AUTO_MODIFY_MODE, autoModifyMode).commitShared(XML_SETTING);
+            shared.putValue(USER_SETTING, AUTO_MODIFY_MODE, autoModifyMode).commitShared(USER_SETTING);
         }
     }
 
@@ -126,7 +130,7 @@ public class Main extends BaseActivity implements View.OnClickListener, Compound
     public boolean onLongClick(View v) {
         isRootMode = !isRootMode;
         Util.toast(appActivity, "已切换为" + (isRootMode ? "ROOT" : "核心破解") + "模式。");
-        shared.putValue(XML_SETTING, ROOT_MODE, isRootMode).commitShared(XML_SETTING);
+        shared.putValue(USER_SETTING, ROOT_MODE, isRootMode).commitShared(USER_SETTING);
         return true;
     }
 }
