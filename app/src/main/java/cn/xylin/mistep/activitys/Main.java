@@ -4,15 +4,12 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioGroup;
-
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
-
 import java.util.Calendar;
 import java.util.TimeZone;
-
 import cn.xylin.mistep.R;
 import cn.xylin.mistep.StepApplication;
 import cn.xylin.mistep.utils.Shared;
@@ -118,7 +115,13 @@ public class Main extends BaseActivity implements View.OnClickListener, Compound
         }
         if (autoModifyMode != tempMode) {
             AutoModifySteps.setNextModifySteps(getApplicationContext(), autoModifyMode != 2);
-            shared.putValue(USER_SETTING, AUTO_MODIFY_MODE, autoModifyMode).commitShared(USER_SETTING);
+            shared.putValue(USER_SETTING, AUTO_MODIFY_MODE, autoModifyMode);
+            if (shFirstOpenAutoAdd.isChecked()) {
+                shared.putValue(USER_SETTING, DAY_INT, Calendar.getInstance(TimeZone.getDefault()).get(Calendar.DAY_OF_MONTH));
+            } else {
+                shared.removeValue(USER_SETTING, DAY_INT);
+            }
+            shared.commitShared(USER_SETTING);
         }
     }
 

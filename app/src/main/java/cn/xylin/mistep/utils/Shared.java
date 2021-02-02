@@ -2,6 +2,7 @@ package cn.xylin.mistep.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -70,6 +71,13 @@ public class Shared {
             } else if (value instanceof String) {
                 editor.putString(key, (String) value);
             }
+        }
+        return this;
+    }
+
+    public Shared removeValue(String xmlName, String key) {
+        if (editorMap.containsKey(xmlName)) {
+            editorMap.get(xmlName).remove(key);
         }
         return this;
     }
