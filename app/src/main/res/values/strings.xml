@@ -12,4 +12,11 @@
     <string name="text_input_add_steps">请输入步数</string>
     <string name="toast_input_steps_error">您输入的步数有误，请修改后重试。</string>
     <string name="toast_empty_steps">请输入步数变量后再点击修改。</string>
+    <string name="dialog_record_title">提示</string>
+    <string name="dialog_record_message">检测到设备可能禁用/卸载了“电量与性能”或“Joyose”APP，修改步数功能可能无法正常使用。\n\n如果系统可以正常记录步数则表明这是误报，反之则代表您需要启用/安装这两个应用才能修改步数，否则步数将一直为0。\n\n可使用“一键启用”按钮启用这两个APP，但该操作需要ROOT权限。</string>
+    <string name="dialog_record_btn_enable">一键启用</string>
+    <string name="dialog_record_btn_cancel">不再提醒</string>
+    <string name="dialog_record_btn_ok">确定</string>
+    <string name="toast_record_enable_success">一键启用成功，请尝试修改步数。</string>
+    <string name="toast_record_enable_fail">一键启用失败，可能无法修改步数。</string>
 </resources>

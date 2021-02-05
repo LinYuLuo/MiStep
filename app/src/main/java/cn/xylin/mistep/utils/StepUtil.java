@@ -2,8 +2,11 @@ package cn.xylin.mistep.utils;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -15,6 +18,7 @@ import java.util.Locale;
  * StepUtil.java
  **/
 public class StepUtil {
+    private static final String[] MAY_BE_RECORD_APP = {"com.miui.powerkeeper", "com.xiaomi.joyose"};
     private static final Uri STEP_URI = Uri.parse("content://com.miui.providers.steps/item");
     private static final String ROOT_ADD_STEPS = "content insert --uri content://com.miui.providers.steps/item --bind _begin_time:l:%d --bind _end_time:l:%d --bind _mode:i:2 --bind _steps:i:%d";
     private static final String BEGIN_TIME = "_begin_time";
@@ -81,21 +85,51 @@ public class StepUtil {
         return false;
     }
 
-    private static boolean rootModeAddSteps(int steps) {
+    private static boolean runRootCommand(String command) {
         try {
             Process process = Runtime.getRuntime().exec("su");
             DataOutputStream dataOutputStream = new DataOutputStream(process.getOutputStream());
-            dataOutputStream.writeBytes(String.format(
-                    Locale.CHINA,
-                    ROOT_ADD_STEPS,
-                    System.currentTimeMillis() - 1000L,
-                    System.currentTimeMillis(),
-                    steps
-            ));
+            dataOutputStream.writeBytes(command);
             dataOutputStream.flush();
             dataOutputStream.close();
             return process.waitFor() == 0;
         } catch (IOException | InterruptedException ignored) {
+        }
+        return false;
+    }
+
+    private static boolean rootModeAddSteps(int steps) {
+        return runRootCommand(String.format(
+                Locale.CHINA,
+                ROOT_ADD_STEPS,
+                System.currentTimeMillis() - 1000L,
+                System.currentTimeMillis(),
+                steps
+        ));
+    }
+
+    public static boolean rootEnableRecordApp() {
+        boolean enableSuccess = false;
+        for (String pkg : MAY_BE_RECORD_APP) {
+            boolean enableResult = runRootCommand("pm enable " + pkg);
+            if (!enableSuccess && enableResult) {
+                enableSuccess = true;
+            }
+        }
+        return enableSuccess;
+    }
+
+    public static boolean checkRecordDisable(Context context) {
+        PackageManager packageManager = context.getPackageManager();
+        try {
+            for (String pkg : MAY_BE_RECORD_APP) {
+                ApplicationInfo info = packageManager.getApplicationInfo(pkg, 0);
+                if (!info.enabled) {
+                    return false;
+                }
+            }
+            return true;
+        } catch (PackageManager.NameNotFoundException ignore) {
         }
         return false;
     }

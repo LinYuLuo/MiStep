@@ -1,5 +1,6 @@
 package cn.xylin.mistep.activitys;
 
+import android.content.DialogInterface;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -10,6 +11,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
 import java.util.Calendar;
 import java.util.TimeZone;
+import androidx.appcompat.app.AlertDialog;
 import cn.xylin.mistep.R;
 import cn.xylin.mistep.StepApplication;
 import cn.xylin.mistep.utils.Shared;
@@ -29,6 +31,7 @@ public class Main extends BaseActivity implements View.OnClickListener, Compound
     public static final String AUTO_MODIFY_MODE = "autoModifyMode";
     public static final String AUTO_ADD_STEPS = "autoAddSteps";
     private static final String DAY_INT = "dayInt";
+    private static final String CHECK_RECORD_APP = "checkRecordApp";
     private MaterialTextView tvTodaySteps;
     private TextInputEditText edtAddSteps;
     private RadioGroup rdgModifyMode;
@@ -72,6 +75,10 @@ public class Main extends BaseActivity implements View.OnClickListener, Compound
         ((MaterialTextView) findViewById(R.id.tvUseTip)).setMovementMethod(ScrollingMovementMethod.getInstance());
         if (autoModifyMode == 1) {
             checkNewDay();
+            return;
+        }
+        if (!shared.getValue(USER_SETTING, CHECK_RECORD_APP, false)) {
+            checkRecordAppState();
         }
     }
 
@@ -135,5 +142,28 @@ public class Main extends BaseActivity implements View.OnClickListener, Compound
         Util.toast(appActivity, "已切换为" + (isRootMode ? "ROOT" : "核心破解") + "模式。");
         shared.putValue(USER_SETTING, ROOT_MODE, isRootMode).commitShared(USER_SETTING);
         return true;
+    }
+
+    private void checkRecordAppState() {
+        if (!StepUtil.checkRecordDisable(getApplicationContext())) {
+            new AlertDialog.Builder(appActivity)
+                    .setTitle(R.string.dialog_record_title)
+                    .setMessage(R.string.dialog_record_message)
+                    .setNeutralButton(R.string.dialog_record_btn_enable, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Util.toast(appActivity, StepUtil.rootEnableRecordApp() ? R.string.toast_record_enable_success : R.string.toast_record_enable_fail);
+                            updateTodaySteps();
+                        }
+                    })
+                    .setNegativeButton(R.string.dialog_record_btn_cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            shared.putValue(USER_SETTING, CHECK_RECORD_APP, true).applyShared(USER_SETTING);
+                        }
+                    })
+                    .setPositiveButton(R.string.dialog_record_btn_ok, null)
+                    .show();
+        }
     }
 }
