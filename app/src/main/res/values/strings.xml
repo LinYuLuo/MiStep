@@ -2,9 +2,9 @@
     <string name="app_name">小米步数管理</string>
     <string name="text_use_tip">自动修改说明：\n\t\t建议使用定时修改，免去每天手动打开软件，步数将在点击修改时进行保存。\n\n模式说明：\n\t\t核心破解：一般仅适用于已被核心破解的系统上，官改ROM大部分自带核心破解。\n\t\tROOT：需要ROOT权限，可以兼容极大部分机型。如果您不知道ROOT是什么，建议在了解ROOT的危害后再考虑是否进行ROOT。\n\t\t通过长按修改步数按钮可以切换运行模式。\n\n开发者信息：\n\t\tAuthor：XyLin\n\t\tEmail：android.xylin@foxmail.com\n\t\t该软件仅供个人娱乐使用，禁止用于商业以及其它非法用途，如有侵权或其它问题请通过邮件联系。</string>
     <string name="text_modify_steps">修改步数</string>
-    <string name="text_zero_auto_modify">0点定时</string>
-    <string name="text_first_open_auto_modify">第一次打开时</string>
-    <string name="text_auto_modify_mode">自动修改：</string>
+    <string name="text_timing_modify">定时运行</string>
+    <string name="text_first_open_modify">初次打开</string>
+    <string name="text_auto_modify_mode">自动修改(每天)：</string>
     <string name="text_modify_mode_add">增加步数</string>
     <string name="text_modify_mode_set">指定步数</string>
     <string name="text_modify_mode">修改方式：</string>
@@ -19,4 +19,6 @@
     <string name="dialog_record_btn_ok">确定</string>
     <string name="toast_record_enable_success">一键启用成功，请尝试修改步数。</string>
     <string name="toast_record_enable_fail">一键启用失败，可能无法修改步数。</string>
+    <string name="text_timing_notification">修改后通知修改结果</string>
+    <string name="toast_please_appoint_time">请指定时间</string>
 </resources>

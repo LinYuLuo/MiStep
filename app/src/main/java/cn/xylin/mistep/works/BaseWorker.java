@@ -7,6 +7,8 @@ import java.util.Calendar;
 import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
+import cn.xylin.mistep.activitys.Main;
+import cn.xylin.mistep.utils.Shared;
 
 /**
  * @author XyLin
@@ -22,8 +24,9 @@ abstract class BaseWorker extends Worker {
     static long getNextTime() {
         Calendar currCalendar = Calendar.getInstance();
         Calendar nextCalendar = Calendar.getInstance();
-        nextCalendar.set(Calendar.HOUR_OF_DAY, 0);
-        nextCalendar.set(Calendar.MINUTE, 1);
+        Shared shared = Shared.getShared();
+        nextCalendar.set(Calendar.HOUR_OF_DAY, shared.getValue(Main.USER_SETTING, Main.TIMING_HOUR, 0));
+        nextCalendar.set(Calendar.MINUTE, shared.getValue(Main.USER_SETTING, Main.TIMING_MINUTE, 1));
         nextCalendar.set(Calendar.SECOND, 0);
         if (nextCalendar.before(currCalendar)) {
             nextCalendar.add(Calendar.HOUR_OF_DAY, 24);

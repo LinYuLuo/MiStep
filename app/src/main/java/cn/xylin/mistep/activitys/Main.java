@@ -1,17 +1,19 @@
 package cn.xylin.mistep.activitys;
 
+import android.app.AlertDialog;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioGroup;
+import android.widget.TimePicker;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
 import java.util.Calendar;
 import java.util.TimeZone;
-import androidx.appcompat.app.AlertDialog;
 import cn.xylin.mistep.R;
 import cn.xylin.mistep.StepApplication;
 import cn.xylin.mistep.utils.Shared;
@@ -30,15 +32,18 @@ public class Main extends BaseActivity implements View.OnClickListener, Compound
     public static final String MODIFY_MODE_ADD = "modifyModeAdd";
     public static final String AUTO_MODIFY_MODE = "autoModifyMode";
     public static final String AUTO_ADD_STEPS = "autoAddSteps";
+    public static final String TIMING_NOTIFICATION = "isNotificationTimingModifyResult";
+    public static final String TIMING_HOUR = "timingHour";
+    public static final String TIMING_MINUTE = "timingMinute";
     private static final String DAY_INT = "dayInt";
     private static final String CHECK_RECORD_APP = "checkRecordApp";
     private MaterialTextView tvTodaySteps;
     private TextInputEditText edtAddSteps;
     private RadioGroup rdgModifyMode;
-    private SwitchMaterial shFirstOpenAutoAdd, shTimingModify;
+    private SwitchMaterial shFirstOpenAutoAdd, shTimingModify, shTimingNotification;
     private Shared shared;
-    private int autoModifyMode;
     private boolean isRootMode;
+    private TimePickerDialog timeDialog;
 
     @Override
     void initActivityControl() {
@@ -49,6 +54,7 @@ public class Main extends BaseActivity implements View.OnClickListener, Compound
         rdgModifyMode = findViewById(R.id.rdgModifyMode);
         shFirstOpenAutoAdd = findViewById(R.id.shFirstOpenAutoAdd);
         shTimingModify = findViewById(R.id.shTimingModify);
+        shTimingNotification = findViewById(R.id.shTimingNotification);
         shared = Shared.getShared();
     }
 
@@ -58,9 +64,13 @@ public class Main extends BaseActivity implements View.OnClickListener, Compound
         updateTodaySteps();
         edtAddSteps.setText(shared.getValue(USER_SETTING, AUTO_ADD_STEPS, 0).toString());
         rdgModifyMode.check(shared.getValue(USER_SETTING, MODIFY_MODE_ADD, true) ? R.id.rdbAddSteps : R.id.rdbSetSteps);
-        autoModifyMode = shared.getValue(USER_SETTING, AUTO_MODIFY_MODE, 0);
+        int autoModifyMode = shared.getValue(USER_SETTING, AUTO_MODIFY_MODE, 0);
         shFirstOpenAutoAdd.setChecked(autoModifyMode == 1);
         shTimingModify.setChecked(autoModifyMode == 2);
+        if (autoModifyMode == 2) {
+            shTimingNotification.setVisibility(View.VISIBLE);
+            shTimingNotification.setChecked(shared.getValue(USER_SETTING, TIMING_NOTIFICATION, false));
+        }
         rdgModifyMode.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -69,6 +79,12 @@ public class Main extends BaseActivity implements View.OnClickListener, Compound
         });
         shFirstOpenAutoAdd.setOnCheckedChangeListener(this);
         shTimingModify.setOnCheckedChangeListener(this);
+        shTimingNotification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                shared.putValue(USER_SETTING, TIMING_NOTIFICATION, isChecked).commitShared(USER_SETTING);
+            }
+        });
         MaterialButton button = findViewById(R.id.btnModifySteps);
         button.setOnClickListener(this);
         button.setOnLongClickListener(this);
@@ -112,23 +128,67 @@ public class Main extends BaseActivity implements View.OnClickListener, Compound
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        int tempMode = autoModifyMode;
-        if (isChecked) {
-            autoModifyMode = buttonView.getId() == R.id.shFirstOpenAutoAdd ? 1 : 2;
-            shFirstOpenAutoAdd.setChecked(autoModifyMode == 1);
-            shTimingModify.setChecked(autoModifyMode == 2);
-        } else if (!shFirstOpenAutoAdd.isChecked() && !shTimingModify.isChecked()) {
-            autoModifyMode = 0;
-        }
-        if (autoModifyMode != tempMode) {
-            AutoModifySteps.setNextModifySteps(getApplicationContext(), autoModifyMode != 2);
-            shared.putValue(USER_SETTING, AUTO_MODIFY_MODE, autoModifyMode);
-            if (shFirstOpenAutoAdd.isChecked()) {
-                shared.putValue(USER_SETTING, DAY_INT, Calendar.getInstance(TimeZone.getDefault()).get(Calendar.DAY_OF_MONTH));
-            } else {
-                shared.removeValue(USER_SETTING, DAY_INT);
+        int switchId = buttonView.getId();
+        if (buttonView.isPressed()) {
+            switch (switchId) {
+                case R.id.shFirstOpenAutoAdd: {
+                    if (isChecked) {
+                        shTimingModify.setChecked(false);
+                        shared.putValue(USER_SETTING, DAY_INT, Calendar.getInstance(TimeZone.getDefault()).get(Calendar.DAY_OF_MONTH));
+                    } else {
+                        shared.removeValue(USER_SETTING, DAY_INT);
+                    }
+                    break;
+                }
+                case R.id.shTimingModify: {
+                    if (isChecked) {
+                        if (timeDialog == null) {
+                            timeDialog = new TimePickerDialog(
+                                    appActivity,
+                                    new TimePickerDialog.OnTimeSetListener() {
+                                        @Override
+                                        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                            shFirstOpenAutoAdd.setChecked(false);
+                                            shTimingNotification.setVisibility(View.VISIBLE);
+                                            shared.putValue(USER_SETTING, TIMING_HOUR, hourOfDay)
+                                                    .putValue(USER_SETTING, TIMING_MINUTE, minute)
+                                                    .commitShared(USER_SETTING);
+                                            AutoModifySteps.setNextModifySteps(getApplicationContext(), false);
+                                            Util.toast(appActivity, "将于每天的" + hourOfDay + "点" + (minute > 0 && minute < 10 ? "0" + minute : minute) + "分自动修改");
+                                        }
+                                    },
+                                    shared.getValue(USER_SETTING, TIMING_HOUR, 0),
+                                    shared.getValue(USER_SETTING, TIMING_MINUTE, 1),
+                                    true
+                            );
+                            timeDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                @Override
+                                public void onCancel(DialogInterface dialog) {
+                                    shTimingModify.setChecked(false);
+                                    AutoModifySteps.setNextModifySteps(getApplicationContext(), true);
+                                }
+                            });
+                        }
+                        timeDialog.show();
+                        Util.toast(appActivity, R.string.toast_please_appoint_time);
+                    } else {
+                        shTimingNotification.setVisibility(View.GONE);
+                    }
+                    break;
+                }
+                default: {
+                    return;
+                }
             }
-            shared.commitShared(USER_SETTING);
+            shared.putValue(USER_SETTING, AUTO_MODIFY_MODE, !shFirstOpenAutoAdd.isChecked() && !shTimingModify.isChecked() ? 0 : shFirstOpenAutoAdd.isChecked() ? 1 : 2)
+                    .commitShared(USER_SETTING);
+        } else if (!isChecked) {
+            if (switchId == R.id.shFirstOpenAutoAdd) {
+                shared.removeValue(USER_SETTING, DAY_INT).commitShared(USER_SETTING);
+            } else if (switchId == R.id.shTimingModify) {
+                shTimingNotification.setVisibility(View.GONE);
+                AutoModifySteps.setNextModifySteps(getApplicationContext(), true);
+            }
         }
     }
 

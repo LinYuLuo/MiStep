@@ -52,8 +52,8 @@
         android:layout_marginStart="5dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:checkedButton="@id/rdbAddSteps"
         android:layout_toEndOf="@id/tvModifyMode"
+        android:checkedButton="@id/rdbAddSteps"
         android:orientation="horizontal">
 
         <com.google.android.material.radiobutton.MaterialRadioButton
@@ -84,7 +84,7 @@
         android:layout_below="@id/rdgModifyMode"
         android:layout_marginStart="5dp"
         android:layout_toEndOf="@id/tvAutoModify"
-        android:text="@string/text_first_open_auto_modify" />
+        android:text="@string/text_first_open_modify" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/shTimingModify"
@@ -93,14 +93,22 @@
         android:layout_below="@id/rdgModifyMode"
         android:layout_marginStart="5dp"
         android:layout_toEndOf="@id/shFirstOpenAutoAdd"
-        android:text="@string/text_zero_auto_modify" />
+        android:text="@string/text_timing_modify" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/shTimingNotification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/shTimingModify"
+        android:text="@string/text_timing_notification"
+        android:visibility="gone" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnModifySteps"
         style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/shFirstOpenAutoAdd"
+        android:layout_below="@id/shTimingNotification"
         android:text="@string/text_modify_steps"
         app:cornerRadius="15dp" />
 

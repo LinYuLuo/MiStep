@@ -2,9 +2,12 @@ package cn.xylin.mistep;
 
 import android.app.Activity;
 import android.app.Application;
+
 import java.util.ArrayList;
+
 import cn.xylin.mistep.activitys.Main;
 import cn.xylin.mistep.utils.MyCrash;
+import cn.xylin.mistep.utils.NotificationUtil;
 import cn.xylin.mistep.utils.Shared;
 import cn.xylin.mistep.utils.WLOG;
 
@@ -20,9 +23,10 @@ public class StepApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        WLOG.initLogFile(getApplicationContext());
-        MyCrash.getInstance().initContext(getApplicationContext());
-        Shared.getShared().addShared(getApplicationContext(), Main.USER_SETTING);
+        WLOG.initLogFile(this);
+        MyCrash.getInstance().initContext(this);
+        Shared.getShared().addShared(this, Main.USER_SETTING);
+        NotificationUtil.get().init(this);
     }
 
     public static void add(Activity appActivity) {
